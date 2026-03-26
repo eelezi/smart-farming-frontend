@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Smart Farming Icon Large">
+  <rect width="512" height="512" rx="72" fill="#2f855a"/>
+  <path d="M120 310c0-78 52-139 136-155v232c-71-9-136-66-136-77z" fill="#dcfce7"/>
+  <path d="M392 310c0-78-52-139-136-155v232c71-9 136-66 136-77z" fill="#bbf7d0"/>
+  <circle cx="256" cy="150" r="37" fill="#f0fdf4"/>
+</svg>
