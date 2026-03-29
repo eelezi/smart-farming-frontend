@@ -16,6 +16,10 @@ npm run build
 npm run preview
 ```
 
+## Branch Strategy
+- `main` – production branch, protected. Merge only via pull requests.
+- `dev` – active development branch. Open PRs from `dev` to `main` for releases.
+
 ## Notes
 - PWA support is enabled via `vite-plugin-pwa`.
 - The app is ready to call a Spring backend API.
