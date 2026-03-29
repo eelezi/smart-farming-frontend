@@ -7,6 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: "auto",
       includeAssets: ["icon-192.svg", "icon-512.svg"],
       manifest: {
         name: "AI Smart Farming Assistant",
@@ -16,6 +17,9 @@ export default defineConfig({
         background_color: "#f7faf7",
         display: "standalone",
         start_url: "/",
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        },
         icons: [
           {
             src: "icon-192.svg",
