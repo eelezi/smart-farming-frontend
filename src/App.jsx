@@ -1,14 +1,33 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard.jsx";
+import Camera from "./pages/Camera.jsx";
+import AddEntry from "./pages/AddEntry.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 function App() {
-  return (
-    <div className="app-shell">
-      <header className="hero">
-        <p className="badge">Tim-mk-22</p>
-        <h1>AI Smart Farming Assistant</h1>
-      </header>
 
-    </div>
+    return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/camera" element={<Camera />} />
+        <Route path="/add-entry" element={<AddEntry />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
+
+// function App() {
+//     return (
+//         <Router>
+//             <Routes>
+//                 <Route path="/" element={<div>TEST DASHBOARD</div>} />
+//                 <Route path="/add-entry" element={<AddEntry />} />
+//             </Routes>
+//         </Router>
+//     );
+// }
 
 export default App;
