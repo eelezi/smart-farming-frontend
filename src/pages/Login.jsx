@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
+import { login } from "../services/authService.js";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function Login() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { setUser, setAuthenticated } = useContext(AuthContext);
 
     const validate = () => {
         const newErrors = {};
@@ -29,7 +33,7 @@ function Login() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
@@ -37,11 +41,16 @@ function Login() {
             return;
         }
         setIsSubmitting(true);
-        // TODO: connect to backend
-        setTimeout(() => {
-            setIsSubmitting(false);
+        try {
+            const data = await login({ email: formData.email, password: formData.password });
+            setUser({ userId: data.userId, name: data.name, email: data.email });
+            setAuthenticated(true);
             navigate("/");
-        }, 800);
+        } catch (err) {
+            setErrors({ general: "Invalid credentials" });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (

@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
+import { register } from "../services/authService.js";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function Register() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { setUser, setAuthenticated } = useContext(AuthContext);
 
     const getPasswordStrength = (password) => {
         if (!password) return null;
@@ -62,7 +66,7 @@ function Register() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
@@ -70,11 +74,20 @@ function Register() {
             return;
         }
         setIsSubmitting(true);
-        // TODO: connect to backend
-        setTimeout(() => {
-            setIsSubmitting(false);
+        try {
+            const data = await register({
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+            });
+            setUser(data);
+            setAuthenticated(true);
             navigate("/");
-        }, 800);
+        } catch (err) {
+            setErrors({ general: "Registration failed" });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const strength = getPasswordStrength(formData.password);
