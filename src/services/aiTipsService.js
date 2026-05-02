@@ -1,13 +1,6 @@
 import { get, post, postFormData } from "./api";
 
-/**
- * AI TIPS API ENDPOINTS:
- * TODO: Replace these with your actual backend endpoints
- * Examples:
- * - POST /api/ai/tips - Get AI tips for entries
- * - GET /api/ai/recommendations - Get crop-specific recommendations
- * - POST /api/ai/analyze-image - Send image for disease analysis
- */
+// API: AI tips endpoints
 
 /**
  * Get AI tips and recommendations for entries
@@ -17,7 +10,7 @@ import { get, post, postFormData } from "./api";
  */
 export const getAITips = async (userId, entryIds = []) => {
   try {
-    // TODO: Update endpoint to match your backend
+    // API: POST /ai/tips
     const data = {
       userId,
       entryIds,
@@ -38,7 +31,7 @@ export const getAITips = async (userId, entryIds = []) => {
  */
 export const getCropRecommendations = async (cropType, location, soilType) => {
   try {
-    // TODO: Update endpoint to match your backend
+    // API: GET /ai/recommendations
     return await get(
       `/ai/recommendations?crop=${cropType}&location=${location}&soil=${soilType}`
     );
@@ -58,7 +51,7 @@ export const analyzeImage = async (imageFile) => {
     const formData = new FormData();
     formData.append("image", imageFile);
     
-    // TODO: Update endpoint to match your backend
+    // API: POST /ai/analyze-image
     return await postFormData("/ai/analyze-image", formData);
   } catch (error) {
     console.error("Failed to analyze image:", error);

@@ -114,9 +114,25 @@ export const useEntries = () => {
             }
         };
 
-        fetchEntries(); // run on mount
-        window.addEventListener("entries-updated", fetchEntries); // ← listen for changes
-        return () => window.removeEventListener("entries-updated", fetchEntries); // cleanup
+        const handleEntriesUpdate = (event) => {
+            console.log('entries-updated event received in useEntries:', event.detail);
+            if (event.detail && event.detail.updatedEntries) {
+                setEntries(event.detail.updatedEntries);
+            }
+        };
+
+        const handleStorageEvent = () => {
+            console.log('Storage event received, refreshing entries');
+            fetchEntries();
+        };
+
+        fetchEntries();
+        window.addEventListener("entries-updated", handleEntriesUpdate);
+        window.addEventListener("storage", handleStorageEvent);
+        return () => {
+            window.removeEventListener("entries-updated", handleEntriesUpdate);
+            window.removeEventListener("storage", handleStorageEvent);
+        };
     }, []);
 
     return { entries, loading, error, setEntries };

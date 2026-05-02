@@ -2,7 +2,7 @@ import React from "react";
 import { formatDate } from "../../utils/formatters";
 import "../../styles/components.css";
 
-function EntryCard({ entry, onClick, onDelete,  onUpdate }) {
+function EntryCard({ entry, onClick }) {
   return (
     <div className="entry-card">
       <div className="entry-card-header">
@@ -36,36 +36,9 @@ function EntryCard({ entry, onClick, onDelete,  onUpdate }) {
             >
                 View Details
             </button>
-
-            <button
-                className="btn-small btn-update"
-                onClick={(e) => {
-                    e.stopPropagation();
-
-                    const updatedEntry = {
-                        ...entry,
-                        status: entry.status === "Healthy" ? "Warning" : "Healthy"
-                    };
-
-                    onUpdate(updatedEntry);
-                }}
-            >
-                Update
-            </button>
-
-            <button
-                className="btn-small btn-delete"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(entry.id);
-                }}
-            >
-                Delete
-            </button>
         </div>
     </div>
   );
 }
 
 export default EntryCard;
-
