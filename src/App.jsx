@@ -4,6 +4,8 @@ import Camera from "./pages/Camera.jsx";
 import AddEntry from "./pages/AddEntry.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
+import EntryDetails from "./pages/EntryDetails.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { PrivateRoute } from "./components/Common/PrivateRoute.jsx"

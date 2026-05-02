@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import FilterBar from "../components/Dashboard/FilterBar";
 import SortOptions from "../components/Dashboard/SortOptions";
@@ -10,12 +11,11 @@ import { useFilters } from "../hooks/useFilters";
 import "../styles/dashboard.css";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const { entries, loading, error, setEntries } = useEntries();
   const { filters, sortBy, setFilters, setSortBy } = useFilters();
-  const [selectedEntry, setSelectedEntry] = useState(null);
-    console.log("Selected entry:", selectedEntry);
 
-  // Filter entries based on filters
+  // Filter entries
     const filteredEntries = (entries).filter((entry) => {
         if (filters.status && entry.status !== filters.status) return false;
         return true;
@@ -28,11 +28,10 @@ function Dashboard() {
 
 
 
-    // const handleDelete = (id) => {
-    //     const updated = entries.filter(e => e.id !== id);
-    //     setEntries(updated);
-    //     localStorage.setItem("farm_entries", JSON.stringify(updated)); // ← add this
-    // };
+    
+    const handleSelectEntry = (entry) => {
+        navigate(`/entry/${entry.id}`);
+    };
 
     const handleUpdate = (updatedEntry) => {
         setEntries(prev =>
@@ -77,7 +76,7 @@ function Dashboard() {
               entries={sortedEntries}
               loading={loading}
               error={error}
-              onSelectEntry={setSelectedEntry}
+              onSelectEntry={handleSelectEntry}
               onDelete={handleDelete}
               onUpdate={handleUpdate}
             />
@@ -88,36 +87,6 @@ function Dashboard() {
           </div>
         </div>
       </div>
-        {selectedEntry && (
-            <div className="entry-details-overlay">
-                <div className="entry-details-modal">
-
-                    <h2>{selectedEntry.cropType}</h2>
-
-                    <div className="details-grid">
-                        <p><b>Location:</b> {selectedEntry.location}</p>
-                        <p><b>Status:</b> {selectedEntry.status}</p>
-                        <p><b>Area:</b> {selectedEntry.area}</p>
-                        <p><b>Planting Date:</b> {selectedEntry.plantingDate}</p>
-                        <p><b>Expected Harvest:</b> {selectedEntry.expectedHarvest}</p>
-                        <p><b>Soil Type:</b> {selectedEntry.soilType}</p>
-                        <p><b>Irrigation:</b> {selectedEntry.irrigationType}</p>
-                        <p><b>Notes:</b> {selectedEntry.notes}</p>
-                    </div>
-
-                    <button
-                        className="btn-primary"
-                        onClick={() => {
-                            console.log("SELECTED ENTRY:", selectedEntry);
-                            setSelectedEntry(null);
-                        }}
-                    >
-                        Close
-                    </button>
-
-                </div>
-            </div>
-        )}
    </MainLayout>
 
 
@@ -126,12 +95,7 @@ function Dashboard() {
 
 
 
-        // <MainLayout>
-        //     <div style={{ color: "black" }}>
-        //         DASHBOARD IS RENDERING
-        //     </div>
-        // </MainLayout>
-
+        
    );
 }
 

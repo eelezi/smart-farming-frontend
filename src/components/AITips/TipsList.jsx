@@ -52,7 +52,12 @@ function TipsList({ entries }) {
       <div className="tips-list">
         {tips.map((tip) => (
           <div key={tip.id} className={`tip-card ${tip.type}`}>
-            <div className="tip-icon">💡</div>
+            <div className="tip-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4m0-4h.01"/>
+              </svg>
+            </div>
             <div className="tip-content">
               <h4>{tip.title}</h4>
               <p>{tip.description}</p>

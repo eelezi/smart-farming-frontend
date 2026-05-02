@@ -68,16 +68,6 @@ export const deleteEntry = async (entryId) => {
 };
 
 
-/*
-export const getEntriesByStatus = async (status) => {
-  try {
-    return await get(`/entries?status=${status}`);
-  } catch (error) {
-    console.error(`Failed to fetch entries by status ${status}:`, error);
-    throw error;
-  }
-};
-*/
 
 export default {
     getAllEntries,
