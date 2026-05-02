@@ -47,7 +47,7 @@ function Login() {
             setAuthenticated(true);
             navigate("/");
         } catch (err) {
-            setErrors({ general: "Invalid credentials" });
+            setErrors({ general: err.message });
         } finally {
             setIsSubmitting(false);
         }
@@ -92,6 +92,10 @@ function Login() {
                         />
                         {errors.password && <span className="field-error">{errors.password}</span>}
                     </div>
+
+                    {errors.general && (
+                        <span className="field-error">{errors.general}</span>
+                    )}
 
                     <button
                         type="submit"

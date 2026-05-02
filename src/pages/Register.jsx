@@ -84,7 +84,7 @@ function Register() {
             setAuthenticated(true);
             navigate("/");
         } catch (err) {
-            setErrors({ general: "Registration failed" });
+            setErrors({ general: err.message });
         } finally {
             setIsSubmitting(false);
         }
@@ -162,6 +162,10 @@ function Register() {
                             </div>
                         )}
                     </div>
+
+                    {errors.general && (
+                        <span className="field-error">{errors.general}</span>
+                    )}
 
                     <button
                         type="submit"
