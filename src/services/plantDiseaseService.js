@@ -23,7 +23,7 @@ export const getPlantDiseaseInfo = async (imageFile) => {
     const formData = new FormData();
     formData.append("image", imageFile);
 
-    const data = await postFormData("/diseases/predict", formData);
+    const data = await postFormData("/crops/diagnosis", formData);
     console.log("Disease info received:", data);
     return data;
   } catch (error) {
