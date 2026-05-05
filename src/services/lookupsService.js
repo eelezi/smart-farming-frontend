@@ -5,7 +5,7 @@ import { get } from "./api";
  * Public endpoint (no auth required).
  */
 export const getCrops = async () => {
-  return get("/api/crops");
+  return get("/crops");
 };
 
 /**
@@ -13,7 +13,7 @@ export const getCrops = async () => {
  * Public endpoint (no auth required).
  */
 export const getSoilTypes = async () => {
-  return get("/api/soil-types");
+  return get("/soil-types");
 };
 
 export default { getCrops, getSoilTypes };

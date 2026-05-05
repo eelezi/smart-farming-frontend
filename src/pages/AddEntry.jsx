@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../components/Layout/MainLayout";
 import { createEntry } from "../services/entriesService";
 import { getCrops, getSoilTypes } from "../services/lookupsService";
+import { get } from "../services/api";
 import "../styles/add-entry.css";
 
 // Backend enum values (must match IrrigationType / CurrentStatus exactly)
@@ -24,9 +25,6 @@ const STATUS_OPTIONS = [
 const EMPTY_FORM = {
   cropId: "",
   soilTypeId: "",
-  locationName: "",
-  latitude: "",
-  longitude: "",
   area: "",
   plantingDate: "",
   expectedHarvestDate: "",
@@ -43,6 +41,13 @@ function AddEntry() {
   const [soilTypes, setSoilTypes] = useState([]);
   const [lookupsLoading, setLookupsLoading] = useState(true);
   const [lookupsError, setLookupsError] = useState(null);
+
+  // Location search state
+  const [locationQuery, setLocationQuery] = useState("");
+  const [locationResults, setLocationResults] = useState([]);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const debounceRef = useRef(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -71,6 +76,35 @@ function AddEntry() {
     loadLookups();
   }, []);
 
+  // Debounced geocode search
+  const handleLocationInput = (e) => {
+    const query = e.target.value;
+    setLocationQuery(query);
+    setSelectedLocation(null);
+    setLocationResults([]);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!query.trim()) return;
+
+    debounceRef.current = setTimeout(async () => {
+      setLocationLoading(true);
+      try {
+        const results = await get(`/weather/geocode?q=${encodeURIComponent(query)}`);
+        setLocationResults(Array.isArray(results) ? results : []);
+      } catch {
+        setLocationResults([]);
+      } finally {
+        setLocationLoading(false);
+      }
+    }, 400);
+  };
+
+  const handleLocationSelect = (loc) => {
+    setSelectedLocation(loc);
+    setLocationQuery(loc.display_name);
+    setLocationResults([]);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -91,18 +125,21 @@ function AddEntry() {
   const buildRequestBody = () => {
     const body = {
       area: parseFloat(formData.area),
-      plantingDate: formData.plantingDate,          // "YYYY-MM-DD" – LocalDate
+      plantingDate: formData.plantingDate,
       cropId: parseInt(formData.cropId, 10),
       soilTypeId: parseInt(formData.soilTypeId, 10),
     };
 
-    if (formData.locationName)      body.locationName      = formData.locationName;
-    if (formData.latitude)          body.latitude          = parseFloat(formData.latitude);
-    if (formData.longitude)         body.longitude         = parseFloat(formData.longitude);
-    if (formData.irrigationType)    body.irrigationType    = formData.irrigationType;
-    if (formData.currentStatus)     body.currentStatus     = formData.currentStatus;
+    if (selectedLocation) {
+      body.locationName = selectedLocation.display_name;
+      body.latitude     = parseFloat(selectedLocation.lat);
+      body.longitude    = parseFloat(selectedLocation.lon);
+    }
+
+    if (formData.irrigationType)      body.irrigationType      = formData.irrigationType;
+    if (formData.currentStatus)       body.currentStatus       = formData.currentStatus;
     if (formData.expectedHarvestDate) body.expectedHarvestDate = formData.expectedHarvestDate;
-    if (formData.notes)             body.notes             = formData.notes;
+    if (formData.notes)               body.notes               = formData.notes;
 
     return body;
   };
@@ -262,57 +299,33 @@ function AddEntry() {
             <h2>Location</h2>
 
             <div className="form-group">
-              <label htmlFor="locationName">Location Name</label>
+              <label htmlFor="locationSearch">Location</label>
               <input
-                id="locationName"
+                id="locationSearch"
                 type="text"
-                name="locationName"
-                placeholder="e.g. North Field"
-                value={formData.locationName}
-                onChange={handleChange}
-                maxLength={255}
+                placeholder="Search for a location…"
+                value={locationQuery}
+                onChange={handleLocationInput}
+                autoComplete="off"
               />
+              {locationLoading && <span className="field-hint">Searching…</span>}
+              {locationResults.length > 0 && (
+                <ul className="location-results">
+                  {locationResults.map((loc, i) => (
+                    <li key={i} onClick={() => handleLocationSelect(loc)}>
+                      {loc.display_name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {selectedLocation && (
+                <span className="field-hint">
+                  Latitude: {parseFloat(selectedLocation.lat).toFixed(5)}, Longitude: {parseFloat(selectedLocation.lon).toFixed(5)}
+                </span>
+              )}
               {fieldErrors.locationName && (
                 <span className="field-error">{fieldErrors.locationName}</span>
               )}
-            </div>
-
-            <div className="form-row">
-              <div className={`form-group ${fieldErrors.latitude ? "has-error" : ""}`}>
-                <label htmlFor="latitude">Latitude</label>
-                <input
-                  id="latitude"
-                  type="number"
-                  name="latitude"
-                  placeholder="-90 to 90"
-                  value={formData.latitude}
-                  onChange={handleChange}
-                  min="-90"
-                  max="90"
-                  step="any"
-                />
-                {fieldErrors.latitude && (
-                  <span className="field-error">{fieldErrors.latitude}</span>
-                )}
-              </div>
-
-              <div className={`form-group ${fieldErrors.longitude ? "has-error" : ""}`}>
-                <label htmlFor="longitude">Longitude</label>
-                <input
-                  id="longitude"
-                  type="number"
-                  name="longitude"
-                  placeholder="-180 to 180"
-                  value={formData.longitude}
-                  onChange={handleChange}
-                  min="-180"
-                  max="180"
-                  step="any"
-                />
-                {fieldErrors.longitude && (
-                  <span className="field-error">{fieldErrors.longitude}</span>
-                )}
-              </div>
             </div>
           </div>
 

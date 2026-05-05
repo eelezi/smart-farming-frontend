@@ -1,7 +1,7 @@
 // Base API configuration and HTTP helper functions
 
 // TODO: Replace with your actual backend URL
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "/api";
 
 /**
  * Helper function to get auth token from localStorage
