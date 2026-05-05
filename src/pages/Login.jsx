@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
 import { login } from "../services/authService.js";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 function Login() {
@@ -19,31 +18,46 @@ function Login() {
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
             newErrors.email = "Please enter a valid email address.";
         }
+
         if (!formData.password) {
             newErrors.password = "Password is required.";
         }
+
         return newErrors;
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: "" }));
-        }
+
+        setErrors((prev) => ({
+            ...prev,
+            [name]: "",
+            general: "",
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
+
         setIsSubmitting(true);
         try {
-            const data = await login({ email: formData.email, password: formData.password });
-            setUser({ userId: data.userId, name: data.name, email: data.email });
+            const data = await login({
+                email: formData.email,
+                password: formData.password,
+            });
+
+            setUser({
+                userId: data.userId,
+                name: data.name,
+                email: data.email,
+            });
             setAuthenticated(true);
             navigate("/");
         } catch (err) {
@@ -93,6 +107,8 @@ function Login() {
                         {errors.password && <span className="field-error">{errors.password}</span>}
                     </div>
 
+                    {errors.general && <div className="field-error">{errors.general}</div>}
+
                     <button
                         type="submit"
                         className="btn-auth"
@@ -100,8 +116,8 @@ function Login() {
                     >
                         {isSubmitting ? (
                             <span className="btn-loading">
-                <span className="spinner"></span> Signing in…
-              </span>
+                                <span className="spinner"></span> Signing in…
+                            </span>
                         ) : (
                             "Sign In"
                         )}

@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
 import { register } from "../services/authService.js";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 function Register() {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { setUser, setAuthenticated } = useContext(AuthContext);
@@ -16,10 +20,12 @@ function Register() {
         if (!password) return null;
         if (password.length < 6) return { label: "Too short", level: 0 };
         if (password.length < 8) return { label: "Weak", level: 1 };
+
         const hasUpper = /[A-Z]/.test(password);
         const hasNumber = /[0-9]/.test(password);
         const hasSpecial = /[^a-zA-Z0-9]/.test(password);
         const score = [hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
+
         if (score === 0) return { label: "Weak", level: 1 };
         if (score === 1) return { label: "Fair", level: 2 };
         if (score === 2) return { label: "Good", level: 3 };
@@ -28,6 +34,7 @@ function Register() {
 
     const validate = () => {
         const newErrors = {};
+
         if (!formData.name.trim()) {
             newErrors.name = "Name is required.";
         } else if (formData.name.trim().length > 100) {
@@ -55,24 +62,36 @@ function Register() {
             }
         }
 
+        if (!formData.confirmPassword) {
+            newErrors.confirmPassword = "Confirm password is required.";
+        } else if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match.";
+        }
+
         return newErrors;
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: "" }));
-        }
+
+        setErrors((prev) => ({
+            ...prev,
+            [name]: "",
+            general: "",
+            ...(name === "password" ? { confirmPassword: "" } : {}),
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
+
         setIsSubmitting(true);
         try {
             const data = await register({
@@ -80,6 +99,7 @@ function Register() {
                 email: formData.email,
                 password: formData.password,
             });
+
             setUser(data);
             setAuthenticated(true);
             navigate("/");
@@ -163,6 +183,26 @@ function Register() {
                         )}
                     </div>
 
+                    <div className={`form-group ${errors.confirmPassword ? "has-error" : ""}`}>
+                        <label htmlFor="confirmPassword">Confirm Password</label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="Re-enter your password"
+                            className="form-input"
+                            autoComplete="new-password"
+                            maxLength={255}
+                        />
+                        {errors.confirmPassword && (
+                            <span className="field-error">{errors.confirmPassword}</span>
+                        )}
+                    </div>
+
+                    {errors.general && <div className="field-error">{errors.general}</div>}
+
                     <button
                         type="submit"
                         className="btn-auth"
@@ -170,8 +210,8 @@ function Register() {
                     >
                         {isSubmitting ? (
                             <span className="btn-loading">
-                <span className="spinner"></span> Creating account…
-              </span>
+                                <span className="spinner"></span> Creating account…
+                            </span>
                         ) : (
                             "Create Account"
                         )}
