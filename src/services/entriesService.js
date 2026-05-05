@@ -1,14 +1,32 @@
 import { get, post, put, delete_ } from "./api";
 
+
+export const mapResponseToEntry = (r) => ({
+  id: r.plantingId,
+  cropId: r.cropId,
+  cropType: r.cropName,
+  soilTypeId: r.soilTypeId,
+  soilType: r.soilTypeName,
+  locationName: r.locationName,
+  latitude: r.latitude,
+  longitude: r.longitude,
+  area: r.area,
+  plantingDate: r.plantingDate,
+  expectedHarvestDate: r.expectedHarvestDate,
+  irrigationType: r.irrigationType,   // enum string e.g. "DRIP"
+  currentStatus: r.currentStatus,     // enum string e.g. "HEALTHY"
+  notes: r.notes,
+  userId: r.userId,
+});
+
 /**
  * Get all entries
 
  */
 export const getAllEntries = async () => {
     try {
-
-        const data = await get("/entries");
-        return data;
+        const data = await get("/api/entries");
+        return data.map(mapResponseToEntry);
     } catch (error) {
         console.error("Failed to fetch entries:", error);
         throw error;
@@ -20,8 +38,8 @@ export const getAllEntries = async () => {
  */
 export const getEntry = async (entryId) => {
     try {
-        const data = await get(`/entries/${entryId}`);
-        return data;
+        const data = await get(`/api/entries/${entryId}`);
+        return mapResponseToEntry(data);
     } catch (error) {
         console.error(`Failed to fetch entry ${entryId}:`, error);
         throw error;
@@ -33,7 +51,7 @@ export const getEntry = async (entryId) => {
  */
 export const createEntry = async (entryData) => {
     try {
-        const data = await post("/entries", entryData);
+        const data = await post("/api/entries", entryData);
         return data;
     } catch (error) {
         console.error("Failed to create entry:", error);
@@ -46,8 +64,8 @@ export const createEntry = async (entryData) => {
  */
 export const updateEntry = async (entryId, entryData) => {
     try {
-        const data = await put(`/entries/${entryId}`, entryData);
-        return data;
+        const data = await put(`/api/entries/${entryId}`, entryData);
+        return mapResponseToEntry(data);
     } catch (error) {
         console.error(`Failed to update entry ${entryId}:`, error);
         throw error;
@@ -59,7 +77,7 @@ export const updateEntry = async (entryId, entryData) => {
  */
 export const deleteEntry = async (entryId) => {
     try {
-        const data = await delete_(`/entries/${entryId}`);
+        const data = await delete_(`/api/entries/${entryId}`);
         return data;
     } catch (error) {
         console.error(`Failed to delete entry ${entryId}:`, error);

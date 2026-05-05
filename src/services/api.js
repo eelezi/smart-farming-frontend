@@ -1,7 +1,7 @@
 // Base API configuration and HTTP helper functions
 
 // TODO: Replace with your actual backend URL
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "http://localhost:8080";
 
 /**
  * Helper function to get auth token from localStorage
@@ -31,9 +31,29 @@ const getHeaders = (contentType = "application/json") => {
  */
 const handleResponse = async (response) => {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `HTTP Error: ${response.status}`);
+    let errorPayload;
+    try {
+      errorPayload = await response.json();
+    } catch {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+ 
+    // Spring MethodArgumentNotValidException sends a list under "errors"
+    if (Array.isArray(errorPayload.errors)) {
+      const apiError = new Error("Validation failed");
+      apiError.fieldErrors = errorPayload.errors; // [{field, defaultMessage}]
+      throw apiError;
+    }
+ 
+    // GlobalExceptionHandler / controller string body
+    const message =
+      errorPayload.message ||
+      (typeof errorPayload === "string" ? errorPayload : null) ||
+      `HTTP Error: ${response.status}`;
+    throw new Error(message);
   }
+ 
+  if (response.status === 204) return null;
   return response.json();
 };
 

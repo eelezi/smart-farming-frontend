@@ -19,6 +19,7 @@ function App() {
                     <Route path="/register" element={<Register />} />
 
                     <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+                    <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
                     <Route path="/camera" element={<PrivateRoute><Camera /></PrivateRoute>} />
                     <Route path="/add-entry" element={<PrivateRoute><AddEntry /></PrivateRoute>} />
                     <Route path="/profile" element={<PrivateRoute><MyProfile /></PrivateRoute>} />
