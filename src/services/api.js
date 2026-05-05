@@ -1,6 +1,6 @@
 // Base API configuration and HTTP helper functions
 
-// TODO: Replace with your actual backend URL
+// Using relative path so Vite proxy handles the routing to the backend
 const API_BASE_URL = "/api";
 
 /**
