@@ -59,7 +59,7 @@ const handleResponse = async (response) => {
 
 /**
  * GET request
- * @param {string} endpoint - API endpoint (e.g., '/entries')
+ * @param {string} endpoint - API endpoint (e.g., '/plantings')
  * @param {object} options - Additional fetch options
  */
 export const get = async (endpoint, options = {}) => {
@@ -78,7 +78,7 @@ export const get = async (endpoint, options = {}) => {
 
 /**
  * POST request
- * @param {string} endpoint - API endpoint (e.g., '/entries')
+ * @param {string} endpoint - API endpoint (e.g., '/plantings')
  * @param {object} data - Data to send in request body
  * @param {object} options - Additional fetch options
  */
@@ -126,7 +126,7 @@ export const postFormData = async (endpoint, formData, options = {}) => {
 
 /**
  * PUT request (update)
- * @param {string} endpoint - API endpoint (e.g., '/entries/1')
+ * @param {string} endpoint - API endpoint (e.g., '/plantings/1')
  * @param {object} data - Data to send in request body
  * @param {object} options - Additional fetch options
  */
@@ -147,7 +147,7 @@ export const put = async (endpoint, data = {}, options = {}) => {
 
 /**
  * DELETE request
- * @param {string} endpoint - API endpoint (e.g., '/entries/1')
+ * @param {string} endpoint - API endpoint (e.g., '/plantings/1')
  * @param {object} options - Additional fetch options
  */
 export const delete_ = async (endpoint, options = {}) => {
@@ -166,7 +166,7 @@ export const delete_ = async (endpoint, options = {}) => {
 
 /**
  * PATCH request (partial update)
- * @param {string} endpoint - API endpoint (e.g., '/entries/1')
+ * @param {string} endpoint - API endpoint (e.g., '/plantings/1')
  * @param {object} data - Data to send in request body
  * @param {object} options - Additional fetch options
  */

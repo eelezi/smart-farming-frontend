@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { getAllEntries } from "../services/entriesService";
+import { getAllEntries } from "../services/plantingsService";
 
 export const useEntries = () => {
     const [entries, setEntries] = useState([]);
