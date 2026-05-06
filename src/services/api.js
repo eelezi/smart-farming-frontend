@@ -31,9 +31,29 @@ const getHeaders = (contentType = "application/json") => {
  */
 const handleResponse = async (response) => {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `HTTP Error: ${response.status}`);
+    let errorPayload;
+    try {
+      errorPayload = await response.json();
+    } catch {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+ 
+    // Spring MethodArgumentNotValidException sends a list under "errors"
+    if (Array.isArray(errorPayload.errors)) {
+      const apiError = new Error("Validation failed");
+      apiError.fieldErrors = errorPayload.errors; // [{field, defaultMessage}]
+      throw apiError;
+    }
+ 
+    // GlobalExceptionHandler / controller string body
+    const message =
+      errorPayload.message ||
+      (typeof errorPayload === "string" ? errorPayload : null) ||
+      `HTTP Error: ${response.status}`;
+    throw new Error(message);
   }
+ 
+  if (response.status === 204) return null;
   return response.json();
 };
 

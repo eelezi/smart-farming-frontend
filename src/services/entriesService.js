@@ -1,14 +1,32 @@
 import { get, post, put, delete_ } from "./api";
 
+
+export const mapResponseToEntry = (r) => ({
+  id: r.plantingId,
+  cropId: r.cropId,
+  cropType: r.cropName,
+  soilTypeId: r.soilTypeId,
+  soilType: r.soilTypeName,
+  location: r.locationName,
+  latitude: r.latitude,
+  longitude: r.longitude,
+  area: r.area,
+  plantingDate: r.plantingDate,
+  expectedHarvestDate: r.expectedHarvestDate,
+  irrigationType: r.irrigationType,   // enum string e.g. "DRIP"
+  status: r.currentStatus,     // enum string e.g. "HEALTHY"
+  notes: r.notes,
+  userId: r.userId,
+});
+
 /**
  * Get all entries
 
  */
 export const getAllEntries = async () => {
     try {
-
         const data = await get("/entries");
-        return data;
+        return data.map(mapResponseToEntry);
     } catch (error) {
         console.error("Failed to fetch entries:", error);
         throw error;
@@ -21,7 +39,7 @@ export const getAllEntries = async () => {
 export const getEntry = async (entryId) => {
     try {
         const data = await get(`/entries/${entryId}`);
-        return data;
+        return mapResponseToEntry(data);
     } catch (error) {
         console.error(`Failed to fetch entry ${entryId}:`, error);
         throw error;
@@ -47,7 +65,7 @@ export const createEntry = async (entryData) => {
 export const updateEntry = async (entryId, entryData) => {
     try {
         const data = await put(`/entries/${entryId}`, entryData);
-        return data;
+        return mapResponseToEntry(data);
     } catch (error) {
         console.error(`Failed to update entry ${entryId}:`, error);
         throw error;

@@ -191,3 +191,27 @@
     width: 100%;
   }
 }
+
+/* ── Backend validation feedback ─────────────────── */
+.form-group.has-error input,
+.form-group.has-error select,
+.form-group.has-error textarea {
+  border-color: #dc3545;
+  background-color: #fff8f8;
+}
+ 
+.field-error {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: #dc3545;
+}
+ 
+.char-count {
+  display: block;
+  text-align: right;
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.2rem;
+}
+ 
