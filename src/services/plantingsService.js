@@ -25,7 +25,7 @@ export const mapResponseToEntry = (r) => ({
  */
 export const getAllEntries = async () => {
     try {
-        const data = await get("/entries");
+        const data = await get("/plantings");
         return data.map(mapResponseToEntry);
     } catch (error) {
         console.error("Failed to fetch entries:", error);
@@ -38,7 +38,7 @@ export const getAllEntries = async () => {
  */
 export const getEntry = async (entryId) => {
     try {
-        const data = await get(`/entries/${entryId}`);
+        const data = await get(`/plantings/${entryId}`);
         return mapResponseToEntry(data);
     } catch (error) {
         console.error(`Failed to fetch entry ${entryId}:`, error);
@@ -51,7 +51,7 @@ export const getEntry = async (entryId) => {
  */
 export const createEntry = async (entryData) => {
     try {
-        const data = await post("/entries", entryData);
+        const data = await post("/plantings", entryData);
         return data;
     } catch (error) {
         console.error("Failed to create entry:", error);
@@ -64,7 +64,7 @@ export const createEntry = async (entryData) => {
  */
 export const updateEntry = async (entryId, entryData) => {
     try {
-        const data = await put(`/entries/${entryId}`, entryData);
+        const data = await put(`/plantings/${entryId}`, entryData);
         return mapResponseToEntry(data);
     } catch (error) {
         console.error(`Failed to update entry ${entryId}:`, error);
@@ -77,7 +77,7 @@ export const updateEntry = async (entryId, entryData) => {
  */
 export const deleteEntry = async (entryId) => {
     try {
-        const data = await delete_(`/entries/${entryId}`);
+        const data = await delete_(`/plantings/${entryId}`);
         return data;
     } catch (error) {
         console.error(`Failed to delete entry ${entryId}:`, error);
@@ -87,10 +87,21 @@ export const deleteEntry = async (entryId) => {
 
 
 
+export const generateRecommendation = async (plantingId, summarized = false) => {
+    try {
+        const data = await post(`/plantings/${plantingId}/recommendation?summarized=${summarized}`);
+        return data;
+    } catch (error) {
+        console.error(`Failed to generate recommendation for planting ${plantingId}:`, error);
+        throw error;
+    }
+};
+
 export default {
     getAllEntries,
     getEntry,
     createEntry,
     updateEntry,
     deleteEntry,
+    generateRecommendation,
 };

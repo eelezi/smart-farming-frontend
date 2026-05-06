@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MainLayout from "../components/Layout/MainLayout";
-import { getEntry, updateEntry, deleteEntry } from "../services/entriesService";
+import { getEntry, updateEntry, deleteEntry } from "../services/plantingsService";
 import { getCrops, getSoilTypes } from "../services/lookupsService";
 import "../styles/entry-details.css";
 
