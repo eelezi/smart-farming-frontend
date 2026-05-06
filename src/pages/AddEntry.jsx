@@ -155,7 +155,7 @@ function AddEntry() {
       await createEntry(requestBody);
       setSubmitted(true);
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 1800);
     } catch (err) {
       if (err.fieldErrors) {

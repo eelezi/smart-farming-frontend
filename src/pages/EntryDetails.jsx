@@ -155,7 +155,7 @@ function EntryDetails() {
       await deleteEntry(id);
       setShowDeleteModal(false);
       showFeedback("success", "Entry deleted. Redirecting…");
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => navigate("/"), 1500);
     } catch (err) {
       showFeedback("error", err.message || "Failed to delete entry.");
       setDeleteLoading(false);
@@ -188,7 +188,7 @@ function EntryDetails() {
       <div className="entry-details-container">
 
         <div className="details-header">
-          <button className="nav-btn back-btn" onClick={() => navigate("/dashboard")}>
+          <button className="nav-btn back-btn" onClick={() => navigate("/")}>
             ← Back to Dashboard
           </button>
           <h1>{entry.cropType} Entry Details</h1>
