@@ -309,6 +309,28 @@
   border-left-color: var(--secondary-color);
 }
 
+.tip-card.warning {
+  border-left-color: #ffc107;
+  background: #fffbf0;
+}
+
+.tip-card.critical {
+  border-left-color: #dc3545;
+  background: #fff5f5;
+}
+
+.stat-card--healthy {
+  border-top: 3px solid #28a745;
+}
+
+.stat-card--warning {
+  border-top: 3px solid #ffc107;
+}
+
+.stat-card--critical {
+  border-top: 3px solid #dc3545;
+}
+
 .tip-icon {
   font-size: 1.5rem;
   flex-shrink: 0;

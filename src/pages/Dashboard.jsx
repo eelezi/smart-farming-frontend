@@ -12,37 +12,28 @@ import "../styles/dashboard.css";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const { entries, loading, error, setEntries } = useEntries();
+  const { entries, loading, error, setEntries, refetch } = useEntries();
   const { filters, sortBy, setFilters, setSortBy } = useFilters();
 
-  // Filter entries
-    const filteredEntries = (entries).filter((entry) => {
-        if (filters.status && entry.status !== filters.status) return false;
-        return true;
-    });
+  const filteredEntries = entries.filter((entry) => {
+    if (filters.status && entry.status !== filters.status) return false;
+    return true;
+  });
 
-    const handleDelete = (id) => {
-        setEntries(prev => prev.filter(entry => entry.id !== id));
+  const handleDelete = (id) => {
+    setEntries(prev => prev.filter(entry => entry.id !== id));
+  };
 
-    };
+  const handleSelectEntry = (entry) => {
+    navigate(`/entry/${entry.id}`);
+  };
 
+  const handleUpdate = (updatedEntry) => {
+    setEntries(prev =>
+      prev.map(entry => entry.id === updatedEntry.id ? updatedEntry : entry)
+    );
+  };
 
-
-    
-    const handleSelectEntry = (entry) => {
-        navigate(`/entry/${entry.id}`);
-    };
-
-    const handleUpdate = (updatedEntry) => {
-        setEntries(prev =>
-            prev.map(entry =>
-                entry.id === updatedEntry.id ? updatedEntry : entry
-            )
-        );
-    };
-
-
-  // Sort entries
   const sortedEntries = [...filteredEntries].sort((a, b) => {
     switch (sortBy) {
       case "date-asc":
@@ -59,10 +50,9 @@ function Dashboard() {
   });
 
   return (
-
     <MainLayout>
       <div className="dashboard">
-        <DashboardHeader entriesCount={sortedEntries.length} />
+        <DashboardHeader entries={entries} />
 
         <div className="dashboard-controls">
           <FilterBar filters={filters} onFiltersChange={setFilters} />
@@ -71,7 +61,12 @@ function Dashboard() {
 
         <div className="dashboard-content">
           <div className="entries-section">
-            <h2>Your Entries</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--spacing-lg)" }}>
+              <h2 style={{ margin: 0 }}>Your Entries</h2>
+              <button className="reset-btn" onClick={refetch} disabled={loading}>
+                {loading ? "Refreshing…" : "Refresh"}
+              </button>
+            </div>
             <EntryList
               entries={sortedEntries}
               loading={loading}
@@ -83,21 +78,12 @@ function Dashboard() {
           </div>
 
           <div className="tips-section">
-            <TipsList entries={sortedEntries} />
+            <TipsList entries={entries} />
           </div>
         </div>
       </div>
-   </MainLayout>
-
-
-
-
-
-
-
-        
-   );
+    </MainLayout>
+  );
 }
 
 export default Dashboard;
-

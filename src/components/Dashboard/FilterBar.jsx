@@ -22,9 +22,9 @@ function FilterBar({ filters, onFiltersChange }) {
                     className="filter-input"
                 >
                     <option value="">All</option>
-                    <option value="Healthy">Healthy</option>
-                    <option value="Warning">Warning</option>
-                    <option value="Critical">Critical</option>
+                    <option value="HEALTHY">Healthy</option>
+                    <option value="WARNING">Warning</option>
+                    <option value="CRITICAL">Critical</option>
                 </select>
             </div>
 
