@@ -1,50 +1,46 @@
 import React from "react";
 import "../../styles/components.css";
 
+const STATUS_TIPS = {
+  WARNING: (cropType) =>
+    `${cropType} is showing early stress signs. Check soil moisture, inspect for pest activity, and verify irrigation coverage.`,
+  CRITICAL: (cropType) =>
+    `${cropType} requires immediate attention. Assess for disease, drought stress, or nutrient deficiency and take corrective action today.`,
+};
+
+function generateTips(entries) {
+  if (entries.length === 0) {
+    return [{
+      id: "empty",
+      title: "Get Started",
+      description: "Add your first planting entry to receive status-based recommendations.",
+      type: "info",
+    }];
+  }
+
+  const actionable = entries
+    .filter(e => e.status === "WARNING" || e.status === "CRITICAL")
+    .map(e => ({
+      id: e.id,
+      title: `${e.cropType}${e.location ? ` — ${e.location}` : ""}`,
+      description: STATUS_TIPS[e.status](e.cropType),
+      type: e.status === "CRITICAL" ? "critical" : "warning",
+    }));
+
+  if (actionable.length === 0) {
+    return [{
+      id: "all-healthy",
+      title: "All Entries Healthy",
+      description: "Your crops are in good shape. Continue monitoring regularly and use the Entry Details page to generate AI recommendations for any planting.",
+      type: "tip",
+    }];
+  }
+
+  return actionable;
+}
+
 function TipsList({ entries }) {
-  // Mock AI tips - in production, this would come from an API
-  const generateTips = () => {
-    if (entries.length === 0) {
-      return [
-        {
-          id: 1,
-          title: "Get Started",
-          description: "Add your first agricultural entry to receive AI-powered tips and recommendations.",
-          type: "info"
-        }
-      ];
-    }
-
-    const tips = [];
-    entries.forEach((entry) => {
-      if (entry.cropType === "wheat") {
-        tips.push({
-          id: entry.id + 1,
-          title: `Wheat Care - ${entry.location}`,
-          description: "Wheat thrives in well-drained soil. Consider nitrogen-rich fertilizers in early spring.",
-          type: "tip"
-        });
-      } else if (entry.cropType === "corn") {
-        tips.push({
-          id: entry.id + 2,
-          title: `Corn Cultivation - ${entry.location}`,
-          description: "Corn requires adequate water. Maintain soil moisture at 60-70% during growing season.",
-          type: "tip"
-        });
-      }
-    });
-
-    return tips.length > 0 ? tips : [
-      {
-        id: 99,
-        title: "General Tip",
-        description: "Monitor your crops regularly for pests and diseases to ensure healthy growth.",
-        type: "tip"
-      }
-    ];
-  };
-
-  const tips = generateTips();
+  const tips = generateTips(entries);
 
   return (
     <div className="tips-section-card">
@@ -70,4 +66,3 @@ function TipsList({ entries }) {
 }
 
 export default TipsList;
-
