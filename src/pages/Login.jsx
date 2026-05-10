@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
 import { login } from "../services/authService.js";
 import { useContext } from "react";
@@ -7,10 +7,12 @@ import { AuthContext } from "../context/AuthContext";
 
 function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { setUser, setAuthenticated } = useContext(AuthContext);
+    const registrationSuccessful = new URLSearchParams(location.search).get("registered") === "1";
 
     const validate = () => {
         const newErrors = {};
@@ -95,6 +97,9 @@ function Login() {
 
                     {errors.general && (
                         <span className="field-error">{errors.general}</span>
+                    )}
+                    {registrationSuccessful && !errors.general && (
+                        <span>Registration successful. Please sign in to continue.</span>
                     )}
 
                     <button

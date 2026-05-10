@@ -87,7 +87,7 @@ function Register() {
             } else {
                 setUser(null);
                 setAuthenticated(false);
-                navigate("/login");
+                navigate("/login?registered=1");
             }
         } catch (err) {
             setErrors({ general: err.message });
