@@ -81,7 +81,12 @@ function Register() {
                 password: formData.password,
             });
             if (data.token) {
-                setUser({ userId: data.userId, name: data.name, email: data.email });
+                const registeredUser = {
+                    ...(data.userId !== undefined && data.userId !== null ? { userId: data.userId } : {}),
+                    ...(data.name ? { name: data.name } : (formData.name ? { name: formData.name } : {})),
+                    ...(data.email ? { email: data.email } : (formData.email ? { email: formData.email } : {})),
+                };
+                setUser(registeredUser);
                 setAuthenticated(true);
                 navigate("/");
             } else {

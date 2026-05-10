@@ -89,6 +89,12 @@
     font-weight: 500;
 }
 
+.field-info {
+    font-size: 0.8125rem;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
 .password-strength {
     display: flex;
     align-items: center;

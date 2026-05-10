@@ -15,7 +15,7 @@ export const register = async ({ name, email, password }) => {
   const data = await post("/auth/register", { name, email, password });
   if (data.token) localStorage.setItem("authToken", data.token);
   const user = {
-    ...(data.userId !== undefined ? { userId: data.userId } : {}),
+    ...(data.userId !== undefined && data.userId !== null ? { userId: data.userId } : {}),
     ...(data.name ? { name: data.name } : (name ? { name } : {})),
     ...(data.email ? { email: data.email } : (email ? { email } : {})),
   };

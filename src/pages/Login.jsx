@@ -99,7 +99,7 @@ function Login() {
                         <span className="field-error">{errors.general}</span>
                     )}
                     {registrationSuccessful && !errors.general && (
-                        <p role="status" aria-live="polite">
+                        <p role="status" aria-live="polite" className="field-info">
                             Registration successful. Please sign in to continue.
                         </p>
                     )}
