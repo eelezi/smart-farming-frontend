@@ -2,19 +2,25 @@ import { get, post, put, delete_ } from "./api";
 
 
 export const mapResponseToEntry = (r) => ({
+  // keep both id and plantingId for callers that expect either
   id: r.plantingId,
+  plantingId: r.plantingId,
   cropId: r.cropId,
   cropType: r.cropName,
   soilTypeId: r.soilTypeId,
   soilType: r.soilTypeName,
+  // provide both location and locationName keys (some UI uses one or the other)
   location: r.locationName,
+  locationName: r.locationName,
   latitude: r.latitude,
   longitude: r.longitude,
   area: r.area,
   plantingDate: r.plantingDate,
   expectedHarvestDate: r.expectedHarvestDate,
   irrigationType: r.irrigationType,   // enum string e.g. "DRIP"
+  // provide both status and currentStatus to match backend DTO naming
   status: r.currentStatus,     // enum string e.g. "HEALTHY"
+  currentStatus: r.currentStatus,
   notes: r.notes,
   userId: r.userId,
 });
@@ -25,7 +31,7 @@ export const mapResponseToEntry = (r) => ({
  */
 export const getAllEntries = async () => {
     try {
-        const data = await get("/plantings");
+                    const data = await get("/plantings");
         return data.map(mapResponseToEntry);
     } catch (error) {
         console.error("Failed to fetch entries:", error);
@@ -89,6 +95,7 @@ export const deleteEntry = async (entryId) => {
 
 export const generateRecommendation = async (plantingId, summarized = false) => {
     try {
+        // Backend exposes recommendation generation at POST /plantings/{id}/recommendation
         const data = await post(`/plantings/${plantingId}/recommendation?summarized=${summarized}`);
         return data;
     } catch (error) {
