@@ -1,79 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MainLayout from "../components/Layout/MainLayout";
+import { AuthContext } from "../context/AuthContext";
+import { getStoredUser } from "../services/authService";
 import "../styles/profile.css";
 
 function MyProfile() {
   const [expandedFAQ, setExpandedFAQ] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, handleLogout: logoutUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const userData = user || getStoredUser();
 
-  //  API call to fetch user profile data
-
-  // useEffect(() => {
-  //   const fetchUserProfile = async () => {
-  //     try {
-  //       const response = await fetch('/api/user/profile', {
-  //         headers: {
-  //           'Authorization': `Bearer ${localStorage.getItem('token')}`,
-  //           'Content-Type': 'application/json'
-  //         }
-  //       });
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         setUserData(data);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching user profile:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchUserProfile();
-  // }, []);
-
-  
-  // Mock user data
-  const mockUserData = {
-    // User personal information - from /api/user/profile
-    name: "John Farmer",
-    email: "john.farmer@example.com",
-    phone: "+389 70 123 456",
-    location: "Skopje, North Macedonia",
-    joinDate: "January 2024",
-    
-
-    notifications: true,
-    language: "en",
-    timezone: "Europe/Skopje"
+  const handleLogout = () => {
+    logoutUser();
+    navigate("/login");
   };
-
-  // Initialize with mock data
-  useEffect(() => {
-    setUserData(mockUserData);
-    setLoading(false);
-  }, []);
-
-  //   API call to fetch FAQ data
-
-  // const [faqData, setFaqData] = useState([]);
-  // useEffect(() => {
-  //   const fetchFAQ = async () => {
-  //     try {
-  //       const response = await fetch('/api/faq', {
-  //         headers: {
-  //           'Content-Type': 'application/json'
-  //         }
-  //       });
-  //       if (response.ok) {
-  //         const faq = await response.json();
-  //         setFaqData(faq);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching FAQ:', error);
-  //     }
-  //   };
-  //   fetchFAQ();
-  // }, []);
 
   const faqData = [
     {
@@ -122,99 +63,75 @@ function MyProfile() {
     setExpandedFAQ(expandedFAQ === id ? null : id);
   };
 
-  // TODO: Add loading spinner component
-  if (loading) {
-    return (
-      <MainLayout>
-        <div className="profile-container">
-          <div style={{ textAlign: 'center', padding: '50px' }}>
-            <p>Loading profile data...</p>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  // TODO: Add error handling for API failures
   if (!userData) {
     return (
-      <MainLayout>
-        <div className="profile-container">
-          <div style={{ textAlign: 'center', padding: '50px' }}>
-            <p>Failed to load profile data. Please try again.</p>
+        <MainLayout>
+          <div className="profile-container">
+            <div style={{ textAlign: 'center', padding: '50px' }}>
+              <p>Failed to load profile data. Please try again.</p>
+            </div>
           </div>
-        </div>
-      </MainLayout>
+        </MainLayout>
     );
   }
 
   return (
-    <MainLayout>
-      <div className="profile-container">
-        <div className="profile-header">
-          <h1>My Profile</h1>
-          <div className="profile-avatar">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
-        </div>
-
-        <div className="profile-content">
-          <section className="profile-info">
-            <h2>Personal Information</h2>
-            <div className="info-grid">
-              <div className="info-item">
-                <label>Name</label>
-                <p>{userData.name}</p>
-              </div>
-              <div className="info-item">
-                <label>Email</label>
-                <p>{userData.email}</p>
-              </div>
-              <div className="info-item">
-                <label>Phone</label>
-                <p>{userData.phone}</p>
-              </div>
-              <div className="info-item">
-                <label>Location</label>
-                <p>{userData.location}</p>
-              </div>
-              <div className="info-item">
-                <label>Member Since</label>
-                <p>{userData.joinDate}</p>
-              </div>
+      <MainLayout>
+        <div className="profile-container">
+          <div className="profile-header">
+            <h1>My Profile</h1>
+            <div className="profile-avatar">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
             </div>
-          </section>
+          </div>
 
-          
-          <section className="faq-section">
-            <h2>Frequently Asked Questions</h2>
-            <div className="faq-container">
-              {faqData.map((faq) => (
-                <div key={faq.id} className="faq-item">
-                  <button
-                    className="faq-question"
-                    onClick={() => toggleFAQ(faq.id)}
-                  >
-                    <span>{faq.question}</span>
-                    <span className={`faq-toggle ${expandedFAQ === faq.id ? 'expanded' : ''}`}>
+          <div className="profile-content">
+            <section className="profile-info">
+              <h2>Personal Information</h2>
+              <div className="info-grid">
+                <div className="info-item">
+                  <label>Name</label>
+                  <p>{userData.name}</p>
+                </div>
+                <div className="info-item">
+                  <label>Email</label>
+                  <p>{userData.email}</p>
+                </div>
+              </div>
+              <button className="logout-button" onClick={handleLogout}>
+                Logout
+              </button>
+            </section>
+
+            <section className="faq-section">
+              <h2>Frequently Asked Questions</h2>
+              <div className="faq-container">
+                {faqData.map((faq) => (
+                    <div key={faq.id} className="faq-item">
+                      <button
+                          className="faq-question"
+                          onClick={() => toggleFAQ(faq.id)}
+                      >
+                        <span>{faq.question}</span>
+                        <span className={`faq-toggle ${expandedFAQ === faq.id ? 'expanded' : ''}`}>
                       {expandedFAQ === faq.id ? '−' : '+'}
                     </span>
-                  </button>
-                  {expandedFAQ === faq.id && (
-                    <div className="faq-answer">
-                      <p>{faq.answer}</p>
+                      </button>
+                      {expandedFAQ === faq.id && (
+                          <div className="faq-answer">
+                            <p>{faq.answer}</p>
+                          </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          </div>
         </div>
-      </div>
-    </MainLayout>
+      </MainLayout>
   );
 }
 
