@@ -197,23 +197,6 @@
     filter: brightness(0.85);
 }
 
-.logout-button {
-    margin-top: 24px;
-    padding: 10px 24px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.logout-button:hover {
-    opacity: 80%;
-}
-
 @media (max-width: 480px) {
     .auth-card {
         padding: var(--spacing-xl) var(--spacing-lg);

@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../components/Layout/MainLayout";
-import { getStoredUser, logout } from "../services/authService";
+import { AuthContext } from "../context/AuthContext";
+import { getStoredUser } from "../services/authService";
 import "../styles/profile.css";
 
 function MyProfile() {
   const [expandedFAQ, setExpandedFAQ] = useState(null);
+  const { user, handleLogout: logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  const userData = getStoredUser();
+  const userData = user || getStoredUser();
 
   const handleLogout = () => {
-    logout();
+    logoutUser();
     navigate("/login");
   };
 
