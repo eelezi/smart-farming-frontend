@@ -13,7 +13,12 @@ export const login = async ({ email, password }) => {
 
 export const register = async ({ name, email, password }) => {
   const data = await post("/auth/register", { name, email, password });
-  localStorage.setItem("user", JSON.stringify(data));
+  if (data.token) localStorage.setItem("authToken", data.token);
+  localStorage.setItem("user", JSON.stringify({
+    userId: data.userId,
+    name: data.name,
+    email: data.email,
+  }));
   return data;
 };
 

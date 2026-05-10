@@ -80,9 +80,15 @@ function Register() {
                 email: formData.email,
                 password: formData.password,
             });
-            setUser(data);
-            setAuthenticated(true);
-            navigate("/");
+            if (data.token) {
+                setUser({ userId: data.userId, name: data.name, email: data.email });
+                setAuthenticated(true);
+                navigate("/");
+            } else {
+                setUser(null);
+                setAuthenticated(false);
+                navigate("/login");
+            }
         } catch (err) {
             setErrors({ general: err.message });
         } finally {
