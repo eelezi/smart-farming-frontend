@@ -1,15 +1,39 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../components/Layout/MainLayout";
 import { AuthContext } from "../context/AuthContext";
-import { getStoredUser } from "../services/authService";
+import { getStoredUser, getCurrentUser, isAuthenticated } from "../services/authService";
 import "../styles/profile.css";
 
 function MyProfile() {
   const [expandedFAQ, setExpandedFAQ] = useState(null);
   const { user, handleLogout: logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { setUser, setAuthenticated } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const userData = user || getStoredUser();
+
+  useEffect(() => {
+    // If not in context but token exists, try fetching current user
+    const load = async () => {
+      if (!userData && isAuthenticated()) {
+        setLoading(true);
+        setError(null);
+        try {
+          const me = await getCurrentUser();
+          setUser(me);
+          setAuthenticated(true);
+        } catch (err) {
+          setError(err.message || "Failed to load profile.");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    load();
+  }, []); // run once
 
   const handleLogout = () => {
     logoutUser();
@@ -65,13 +89,29 @@ function MyProfile() {
 
   if (!userData) {
     return (
-        <MainLayout>
-          <div className="profile-container">
-            <div style={{ textAlign: 'center', padding: '50px' }}>
-              <p>Failed to load profile data. Please try again.</p>
-            </div>
+      <MainLayout>
+        <div className="profile-container">
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            {loading ? (
+              <p>Loading profile…</p>
+            ) : error ? (
+              <>
+                <p>{error}</p>
+                <p>
+                  Please <a href="/login">sign in</a> to view your profile.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>Not signed in.</p>
+                <p>
+                  Please <a href="/login">sign in</a> to view your profile.
+                </p>
+              </>
+            )}
           </div>
-        </MainLayout>
+        </div>
+      </MainLayout>
     );
   }
 
