@@ -25,7 +25,7 @@ function EntryCard({ entry, onClick }) {
         
         <div className="entry-detail">
           <span className="detail-label">Area:</span>
-          <span className="detail-value">{entry.area} {entry.areaUnit || "acres"}</span>
+          <span className="detail-value">{entry.area} {entry.areaUnit || "ha"}</span>
         </div>
       </div>
 
