@@ -14,11 +14,14 @@ export const login = async ({ email, password }) => {
 export const register = async ({ name, email, password }) => {
   const data = await post("/auth/register", { name, email, password });
   if (data.token) localStorage.setItem("authToken", data.token);
-  localStorage.setItem("user", JSON.stringify({
-    userId: data.userId,
-    name: data.name,
-    email: data.email,
-  }));
+  const user = {
+    ...(data.userId !== undefined ? { userId: data.userId } : {}),
+    ...(data.name ? { name: data.name } : (name ? { name } : {})),
+    ...(data.email ? { email: data.email } : (email ? { email } : {})),
+  };
+  if (Object.keys(user).length > 0) {
+    localStorage.setItem("user", JSON.stringify(user));
+  }
   return data;
 };
 
