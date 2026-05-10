@@ -8,7 +8,7 @@ import MyProfile from "./pages/MyProfile.jsx";
 import EntryDetails from "./pages/EntryDetails.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
-import { PrivateRoute } from "./components/Common/PrivateRoute.jsx"
+import { PrivateRoute } from "./components/Common/PrivateRoute.jsx";
 
 function App() {
     return (
