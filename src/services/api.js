@@ -6,7 +6,7 @@ const API_BASE_URL = "/api";
 /**
  * Helper function to get auth token from localStorage
  */
-const getAuthToken = () => {
+export const getAuthToken = () => {
   return localStorage.getItem("authToken");
 };
 
@@ -192,5 +192,6 @@ export default {
   put,
   delete: delete_,
   patch,
+  getAuthToken,
 };
 

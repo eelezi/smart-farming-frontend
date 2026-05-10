@@ -3,19 +3,41 @@ import { get, post, postFormData } from "./api";
 // API: AI tips endpoints
 
 /**
- * Get AI tips and recommendations for entries
+ * Get AI recommendations for a specific planting entry
+ * @param {number} plantingId - Planting/Entry ID
+ * @param {boolean} summarized - Whether to return summarized recommendations (default: true)
+ * @returns {Promise<Object>} AI recommendation response
+ */
+export const getRecommendation = async (plantingId, summarized = true) => {
+  try {
+    // API: POST /plantings/{id}/recommendation
+    const data = {};
+    return await post(`/plantings/${plantingId}/recommendation?summarized=${summarized}`, data);
+  } catch (error) {
+    console.error("Failed to fetch recommendation:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get AI tips and recommendations for entries (batch)
  * @param {string} userId - User ID
  * @param {array} entryIds - Array of entry IDs
  * @returns {Promise<Object>} AI tips response
  */
 export const getAITips = async (userId, entryIds = []) => {
   try {
-    // API: POST /ai/tips
-    const data = {
-      userId,
-      entryIds,
+    // Fetch recommendations for each entry
+    const recommendations = await Promise.all(
+      entryIds.map(id => getRecommendation(id, true))
+    );
+    return {
+      success: true,
+      data: recommendations.map((rec, idx) => ({
+        entryId: entryIds[idx],
+        recommendation: rec,
+      })),
     };
-    return await post("/ai/tips", data);
   } catch (error) {
     console.error("Failed to fetch AI tips:", error);
     throw error;

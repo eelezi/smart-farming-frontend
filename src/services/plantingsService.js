@@ -23,6 +23,14 @@ export const mapResponseToEntry = (r) => ({
   currentStatus: r.currentStatus,
   notes: r.notes,
   userId: r.userId,
+    recommendationId: r.recommendationId,
+    recommendationText: r.recommendationText,
+    recommendationCreatedAt: r.recommendationCreatedAt,
+    recommendationSummary: r.recommendationSummary,
+    tips: r.tips || [],
+    instructions: r.instructions || [],
+    cultivationAdvice: r.cultivationAdvice,
+    recommendationGeneratedAt: r.recommendationGeneratedAt,
 });
 
 /**

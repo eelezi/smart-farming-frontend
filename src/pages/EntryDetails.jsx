@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MainLayout from "../components/Layout/MainLayout";
-import { getEntry, updateEntry, deleteEntry } from "../services/plantingsService";
+import { getEntry, updateEntry, deleteEntry, generateRecommendation } from "../services/plantingsService";
 import { getCrops, getSoilTypes } from "../services/lookupsService";
+import { getWeatherForecast, getWeatherDescription } from "../services/weatherService";
+import { generateEntryPdf } from "../services/plantingPdfService";
 import "../styles/entry-details.css";
 
 const IRRIGATION_OPTIONS = [
@@ -47,6 +49,14 @@ function EntryDetails() {
 
   const [feedback, setFeedback] = useState(null); // { type: 'success'|'error', message }
 
+  const [weather, setWeather] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherError, setWeatherError] = useState(null);
+
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+
+  const [recommendationGenerating, setRecommendationGenerating] = useState(false);
+
   const showFeedback = (type, message, durationMs = 3500) => {
     setFeedback({ type, message });
     setTimeout(() => setFeedback(null), durationMs);
@@ -64,6 +74,25 @@ function EntryDetails() {
         setEntry(entryData);
         setCrops(cropsData);
         setSoilTypes(soilData);
+
+        // Fetch weather if coordinates are available
+        if (entryData.latitude != null && entryData.longitude != null) {
+          try {
+            setWeatherLoading(true);
+            const weatherData = await getWeatherForecast(
+              entryData.latitude,
+              entryData.longitude,
+              "auto",
+              entryData.recommendationId
+            );
+            setWeather(weatherData);
+          } catch (err) {
+            console.error("Weather fetch error:", err);
+            setWeatherError(err.message || "Failed to load weather forecast");
+          } finally {
+            setWeatherLoading(false);
+          }
+        }
       } catch (err) {
         setFetchError(err.message || "Failed to load entry.");
       } finally {
@@ -162,6 +191,55 @@ function EntryDetails() {
     }
   };
 
+  // ── PDF Generation ─────────────────────────────────────────────────────────
+  const handleGeneratePdf = async () => {
+    try {
+      setPdfGenerating(true);
+      await generateEntryPdf(id);
+      showFeedback("success", "PDF downloaded successfully!");
+    } catch (err) {
+      showFeedback("error", err.message || "Failed to generate PDF.");
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
+
+  // ── Recommendation Generation ──────────────────────────────────────────────
+  const handleRegenerateRecommendation = async () => {
+    try {
+      setRecommendationGenerating(true);
+      const newRec = await generateRecommendation(id, true);
+      setEntry((prev) => ({
+        ...prev,
+        recommendationId: newRec.recommendationId,
+        recommendationText: newRec.recommendationText,
+        recommendationCreatedAt: newRec.createdAt,
+      }));
+      showFeedback("success", "Recommendation updated successfully!");
+    } catch (err) {
+      showFeedback("error", err.message || "Failed to generate recommendation.");
+    } finally {
+      setRecommendationGenerating(false);
+    }
+  };
+
+  // ── Weather helpers ────────────────────────────────────────────────────────
+  const getWeatherIcon = (code) => {
+    const icons = {
+      0: "☀️", 1: "🌤️", 2: "⛅", 3: "☁️", 45: "🌫️", 48: "🌫️",
+      51: "🌧️", 53: "🌧️", 55: "🌧️", 61: "🌧️", 63: "🌧️", 65: "⛈️",
+      71: "🌨️", 73: "🌨️", 75: "🌨️", 80: "🌧️", 81: "⛈️", 82: "⛈️",
+      85: "🌨️", 86: "🌨️", 95: "⛈️", 96: "⛈️", 99: "⛈️",
+    };
+    return icons[code] || "🌡️";
+  };
+
+  const getDay = (dateStr) => {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const date = new Date(dateStr);
+    return days[date.getDay()];
+  };
+
   // ── Render ────────────────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -249,10 +327,190 @@ function EntryDetails() {
           </div>
         </section>
 
-        {/* Actions */}
+        {/* Weather Section */}
+        {weather && !weatherLoading && (
+          <section className="weather-section">
+            <h2>🌤️ Local Weather Forecast</h2>
+            {weather.daily && weather.daily.time && weather.daily.time.length > 0 ? (
+              <>
+                {/* Current Conditions */}
+                <div className="current-weather">
+                  <div className="weather-main">
+                    <div className="weather-icon">
+                      {getWeatherIcon(weather.daily.weather_code?.[0])}
+                    </div>
+                    <div className="weather-details">
+                      <h3>
+                        {weather.daily.temperature_2m_max?.[0]
+                          ? Math.round(weather.daily.temperature_2m_max[0])
+                          : "--"}
+                        °C
+                      </h3>
+                      <p>
+                        {getWeatherDescription(weather.daily.weather_code?.[0] || 0)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="weather-stats">
+                    <div className="stat">
+                      <span>💧</span>
+                      <span>
+                        {weather.daily.precipitation_sum?.[0]
+                          ? Math.round(weather.daily.precipitation_sum[0] * 10) / 10
+                          : 0}
+                        mm
+                      </span>
+                      <span>Rainfall</span>
+                    </div>
+                    <div className="stat">
+                      <span>💨</span>
+                      <span>
+                        {weather.daily.wind_speed_10m_max?.[0]
+                          ? Math.round(weather.daily.wind_speed_10m_max[0])
+                          : 0}
+                        mph
+                      </span>
+                      <span>Wind</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5-Day Forecast */}
+                <div>
+                  <h3 style={{ marginBottom: "15px", color: "#2c3e50" }}>5-Day Forecast</h3>
+                  <div className="forecast-grid">
+                    {weather.daily.time.slice(0, 5).map((date, idx) => (
+                      <div key={idx} className="forecast-day">
+                        <div className="day-name">{getDay(date)}</div>
+                        <span className="day-icon">
+                          {getWeatherIcon(weather.daily.weather_code?.[idx])}
+                        </span>
+                        <div className="temp-range">
+                          <span style={{ color: "#e74c3c" }}>
+                            {weather.daily.temperature_2m_max?.[idx]
+                              ? Math.round(weather.daily.temperature_2m_max[idx])
+                              : "--"}
+                            °
+                          </span>
+                          <span style={{ color: "#3498db" }}>
+                            {weather.daily.temperature_2m_min?.[idx]
+                              ? Math.round(weather.daily.temperature_2m_min[idx])
+                              : "--"}
+                            °
+                          </span>
+                        </div>
+                        <p className="precipitation">
+                          {weather.daily.precipitation_sum?.[idx]
+                            ? Math.round(weather.daily.precipitation_sum[idx] * 10) / 10
+                            : 0}
+                          mm rain
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div style={{ color: "#666", textAlign: "center", padding: "20px" }}>
+                No weather data available
+              </div>
+            )}
+          </section>
+        )}
+
+        {weatherLoading && (
+          <section className="weather-section">
+            <div className="loading">Loading weather forecast…</div>
+          </section>
+        )}
+
+        {weatherError && !weather && (
+          <section className="weather-section">
+            <div style={{ color: "#dc3545", padding: "20px", textAlign: "center" }}>
+              ⚠️ {weatherError}
+            </div>
+          </section>
+        )}
+
+        {/* Recommendation Section */}
+        {entry.recommendationText && (
+          <section style={{
+            background: "white",
+            borderRadius: "12px",
+            padding: "25px",
+            marginBottom: "25px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+            borderLeft: "4px solid #667eea",
+          }}>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20px",
+              paddingBottom: "15px",
+              borderBottom: "2px solid #667eea",
+            }}>
+              <h2 style={{
+                color: "#2c3e50",
+                margin: 0,
+                fontSize: "1.5rem",
+              }}>
+                🤖 AI Recommendation
+              </h2>
+              <button
+                onClick={handleRegenerateRecommendation}
+                disabled={recommendationGenerating}
+                style={{
+                  background: "#667eea",
+                  color: "white",
+                  border: "none",
+                  padding: "8px 16px",
+                  borderRadius: "6px",
+                  cursor: recommendationGenerating ? "not-allowed" : "pointer",
+                  fontSize: "0.9rem",
+                  fontWeight: "500",
+                  opacity: recommendationGenerating ? 0.6 : 1,
+                }}
+              >
+                {recommendationGenerating ? "🔄 Updating..." : "🔄 Regenerate"}
+              </button>
+            </div>
+            <div style={{
+              color: "#555",
+              lineHeight: "1.8",
+              whiteSpace: "pre-wrap",
+              wordWrap: "break-word",
+              fontSize: "0.95rem",
+            }}>
+              {entry.recommendationText}
+            </div>
+            {entry.recommendationCreatedAt && (
+              <div style={{
+                marginTop: "15px",
+                fontSize: "0.85rem",
+                color: "#999",
+                fontStyle: "italic",
+              }}>
+                Last updated: {new Date(entry.recommendationCreatedAt).toLocaleString()}
+              </div>
+            )}
+          </section>
+        )}
+
         <section className="action-buttons">
           <button className="action-btn edit-btn" onClick={openEdit}>
             ✏️ Edit Entry
+          </button>
+          <button
+            className="action-btn"
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              color: "white",
+            }}
+            onClick={handleGeneratePdf}
+            disabled={pdfGenerating}
+          >
+            📄 {pdfGenerating ? "Generating PDF…" : "Download PDF"}
           </button>
           <button className="action-btn delete-btn" onClick={() => setShowDeleteModal(true)}>
             🗑️ Delete Entry

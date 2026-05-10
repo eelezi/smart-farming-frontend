@@ -319,6 +319,36 @@
   background: #fff5f5;
 }
 
+.tip-card.ai-tip {
+  border-left-color: #4caf50;
+  background: #f1f8f4;
+}
+
+.tip-card.ai-tip:hover {
+  background: #e8f5e9;
+}
+
+.tip-card.fallback-tip {
+  border-left-color: #ff9800;
+  background: #fff8f1;
+}
+
+.tips-section-card .loading {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.tips-section-card .error {
+  background: #fff5f5;
+  border: 1px solid #dc3545;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  color: #dc3545;
+  font-size: 0.875rem;
+}
+
 .stat-card--healthy {
   border-top: 3px solid #28a745;
 }
@@ -334,6 +364,39 @@
 .tip-icon {
   font-size: 1.5rem;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tip-card.info .tip-icon svg {
+  color: #2196f3;
+  stroke: #2196f3;
+}
+
+.tip-card.tip .tip-icon svg {
+  color: var(--secondary-color);
+  stroke: var(--secondary-color);
+}
+
+.tip-card.warning .tip-icon svg {
+  color: #ffc107;
+  stroke: #ffc107;
+}
+
+.tip-card.critical .tip-icon svg {
+  color: #dc3545;
+  stroke: #dc3545;
+}
+
+.tip-card.ai-tip .tip-icon svg {
+  color: #4caf50;
+  stroke: #4caf50;
+}
+
+.tip-card.fallback-tip .tip-icon svg {
+  color: #ff9800;
+  stroke: #ff9800;
 }
 
 .tip-content h4 {
