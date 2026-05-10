@@ -1,0 +1,338 @@
+@import './variables.css';
+
+.camera-page {
+  padding: var(--spacing-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 150px);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.camera-container {
+  width: 100%;
+}
+
+/* MENU MODE - Two Cards */
+.camera-menu {
+  text-align: center;
+}
+
+.camera-title {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--primary-color);
+}
+
+.camera-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.camera-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.camera-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.camera-card h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.5rem;
+}
+
+.camera-card p {
+  color: var(--text-light);
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark, #2e7d32);
+}
+
+.btn-primary:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 2px solid #ddd;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+  border-color: #bbb;
+}
+
+/* CAMERA VIEW */
+.camera-view {
+  text-align: center;
+}
+
+.camera-view h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+.camera-video {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: var(--radius-lg);
+  background: black;
+  margin-bottom: var(--spacing-lg);
+}
+
+.camera-controls {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.camera-controls button {
+  padding: var(--spacing-md) var(--spacing-2xl);
+  font-size: 1rem;
+}
+
+/* RESULTS VIEW */
+.results-view {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.results-view h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.image-preview {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.preview-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: var(--radius-lg);
+  border: 2px solid #ddd;
+}
+
+.error-message {
+  background-color: #ffebee;
+  border: 1px solid #ef5350;
+  color: #c62828;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.analysis-result {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.analysis-result h3 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+.result-card {
+  background: #f9f9f9;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.disease-info h4 {
+  color: #d32f2f;
+  font-size: 1.3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.disease-description {
+  color: var(--text-light);
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.95rem;
+}
+
+.disease-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: white;
+  border-radius: var(--radius-md);
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-item .label {
+  font-weight: 600;
+  color: #333;
+}
+
+.detail-item .severity {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.severity.mild {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.severity.moderate {
+  background-color: #ffe5cc;
+  color: #b85a01;
+}
+
+.severity.severe {
+  background-color: #ffcccc;
+  color: #c41c3b;
+}
+
+.recommendations-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.recommendations-section h5 {
+  color: #333;
+  margin-bottom: var(--spacing-md);
+  font-size: 1rem;
+}
+
+.recommendations-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.recommendations-list li {
+  padding: var(--spacing-sm) 0;
+  color: #555;
+  border-bottom: 1px solid #eee;
+}
+
+.recommendations-list li:last-child {
+  border-bottom: none;
+}
+
+.treatment-section {
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.treatment-section h5 {
+  color: #333;
+  margin-bottom: var(--spacing-md);
+  font-size: 1rem;
+}
+
+.treatment-text {
+  color: #555;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.analysis-controls,
+.result-controls {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.analysis-controls button,
+.result-controls button {
+  padding: var(--spacing-md) var(--spacing-2xl);
+  font-size: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .camera-page {
+    padding: var(--spacing-lg);
+  }
+
+  .camera-title {
+    font-size: 1.8rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-card {
+    padding: var(--spacing-lg);
+  }
+
+  .disease-details {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-controls {
+    flex-direction: column;
+  }
+
+  .analysis-controls,
+  .result-controls {
+    flex-direction: column;
+  }
+
+  .analysis-controls button,
+  .result-controls button {
+    width: 100%;
+  }
+}
